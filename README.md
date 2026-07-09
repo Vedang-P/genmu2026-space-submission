@@ -4,24 +4,39 @@ SPACE is a preservation-first method for artist/style unlearning in Stable Diffu
 
 For a prompt like `Bedroom in Arles by Vincent van Gogh`, the edited model should still produce a coherent bedroom — not a collapsed or unrelated image, and not another named artist's style. SPACE targets **neutralized style suppression**, not artist replacement and not indiscriminate quality degradation.
 
-## Submission target: Thomas Kinkade
+## Submission target: Van Gogh
 
-The submitted checkpoint erases **Thomas Kinkade** from CompVis Stable Diffusion v1.4. Validated on 50 target prompts (10 samples each, 500 matched pairs) plus a full 30,000-image FID run against the official MS COCO 2014 validation set.
+The submitted checkpoint erases **Vincent van Gogh** from CompVis Stable Diffusion v1.4. Validated on 50 target prompts (10 samples each, 500 matched pairs) plus a full 30,000-image FID run against the official MS COCO 2014 validation set.
+
+| Metric | SPACE (Van Gogh) | Reference |
+| --- | --- | --- |
+| FID (30k, `torch-fidelity`, canonical) | **14.57** | Vanilla SD v1.4 (ESD paper): 14.50 |
+| CLIP image similarity (edited vs. vanilla) | 0.798 | 1.0 = identical |
+| Style target rate | 0.324 | fraction of forget-set samples still hitting the target style |
+| Style drop (CLIP style score) | 0.045 | vanilla style score 0.298 → edited 0.252 |
+| LPIPS (edited vs. vanilla) | 0.569 | perceptual distance |
+| DINO similarity (edited vs. vanilla) | 0.622 | structural/content similarity |
+
+FID lands within ~0.1 of the unedited base model while the target style score drops — general image quality is preserved at COCO scale while the target concept is suppressed. Full protocol, cumulative FID-vs-sample-count curve, training curves, and a metric-validation audit are in [`results/van_gogh_30k_report/`](results/van_gogh_30k_report/) (start with [`summary.md`](results/van_gogh_30k_report/summary.md)).
+
+- **Model weights:** [Google Drive](https://drive.google.com/drive/folders/1L07gdJJQc1Tmf4sj4HkkAuvDdIpWDPIp)
+- **Retain-set samples (COCO, SPACE-generated):** [HF: `van_gogh_30k/fid/space`](https://huggingface.co/datasets/vedangfake/space-erasing-artifacts/tree/main/van_gogh_30k/fid/space)
+- **Forget-set samples (Van Gogh prompts, vanilla vs. SPACE):** [HF: `van_gogh_30k/report/visual_examples.png`](https://huggingface.co/datasets/vedangfake/space-erasing-artifacts/blob/main/van_gogh_30k/report/visual_examples.png)
+
+## Additional validated result: Thomas Kinkade
+
+SPACE was validated with the same protocol on a second, independent concept:
 
 | Metric | SPACE (Thomas Kinkade) | Reference |
 | --- | --- | --- |
-| FID (30k, `torch-fidelity`, canonical) | **14.58** | Vanilla SD v1.4 (ESD paper): 14.50 |
-| CLIP image similarity (edited vs. vanilla) | 0.755 | 1.0 = identical |
-| Style target rate | 0.484 | fraction of forget-set samples still hitting the target style |
-| Style drop (CLIP style score) | 0.064 | vanilla style score 0.298 → edited 0.234 |
-| LPIPS (edited vs. vanilla) | 0.578 | perceptual distance |
-| DINO similarity (edited vs. vanilla) | 0.471 | structural/content similarity |
+| FID (30k, canonical) | 14.58 | Vanilla SD v1.4: 14.50 |
+| CLIP image similarity | 0.755 | 1.0 = identical |
+| Style target rate | 0.484 | fraction still hitting target style |
+| Style drop | 0.064 | vanilla style score 0.298 → edited 0.234 |
+| LPIPS | 0.578 | perceptual distance |
+| DINO similarity | 0.471 | structural/content similarity |
 
-FID lands within ~0.1 of the unedited base model while the target style score drops — i.e. general image quality is preserved at COCO scale while the target concept is suppressed. Full protocol, cumulative FID-vs-sample-count curve, training curves, and a metric-validation audit are in [`results/thomas_kinkade_30k_report/`](results/thomas_kinkade_30k_report/) (start with [`summary.md`](results/thomas_kinkade_30k_report/summary.md)).
-
-Generated samples for both the forget set (Thomas Kinkade prompts) and the retain set (COCO-30k) are hosted on Hugging Face: **[vedangfake/space-erasing-artifacts](https://huggingface.co/datasets/vedangfake/space-erasing-artifacts)** (`thomas_kinkade_30k/`).
-
-Model weights: **`<!-- TODO: add the Hugging Face weights repo URL here before submitting -->`**
+Details in [`results/thomas_kinkade_30k_report/`](results/thomas_kinkade_30k_report/). Generated samples (forget + retain) for both concepts are on Hugging Face: **[vedangfake/space-erasing-artifacts](https://huggingface.co/datasets/vedangfake/space-erasing-artifacts)** (`van_gogh_30k/`, `thomas_kinkade_30k/`).
 
 ## How SPACE works
 
@@ -69,7 +84,7 @@ Full notation, the saliency-ranking procedure, the two-stage training curriculum
 
 ```text
 training/    Training entrypoints (space_sd.py, esd_sd.py) and run scripts,
-             including the exact Thomas Kinkade submission pipeline.
+             including the Thomas Kinkade 30k submission-pipeline example.
 inference/   Given a checkpoint (or none, for vanilla SD), generate images.
 evaluation/  CLIP/LPIPS/FID/KID metrics, comparison grids, FID-vs-sample-count
              analysis, report generation.
@@ -81,10 +96,10 @@ data/        Prompt CSVs: target-artist prompts and the COCO-30k preserve/FID se
 environment/ RunPod bootstrap and ESD-x baseline weight download.
 docs/        Full method write-up, research objective, Thomas Kinkade RunPod
              run guide, experiment plan.
-results/     Compact, checked-in metrics/plots/provenance for the Thomas
-             Kinkade submission and the Van Gogh method-development benchmark.
-             Bulk generated images and checkpoints are not committed — see
-             "Weights and generated samples" below.
+results/     Compact, checked-in metrics/plots/provenance for the Van Gogh
+             submission and the Thomas Kinkade validation run. Bulk generated
+             images and checkpoints are not committed — see "Weights and
+             generated samples" below.
 ```
 
 ## Setup
@@ -99,19 +114,21 @@ All scripts assume they're run from the repository root and resolve the base mod
 
 ## Usage
 
-### Train SPACE on a new concept
+### Train SPACE on Van Gogh (submission target)
 
 ```bash
-ERASE_CONCEPT="Thomas Kinkade" \
-TARGET_PROMPTS_PATH="data/thomas_kinkade_prompts.csv" \
-TARGET_ARTIST_FILTER="Thomas Kinkade" \
-EXP_NAME="Thomas_Kinkade" \
+ERASE_CONCEPT="Vincent van Gogh" \
+TARGET_PROMPTS_PATH="data/vangogh_prompts.csv" \
+TARGET_ARTIST_FILTER="Vincent van Gogh" \
+EXP_NAME="Van_Gogh" \
 bash training/run_space_training.sh
 ```
 
-Checkpoint is written to `space-models/sd/space-<EXP_NAME>.safetensors`. Key knobs (`ERASE_SCALE`, `ALPHA_ART`, `TRAJECTORY_BANDS`, `LORA_RANK`, stage lengths, loss weights) are documented in [`docs/METHOD.md`](docs/METHOD.md) and exposed as env vars in [`training/run_space_training.sh`](training/run_space_training.sh). A 10-step sanity check: `SPACE_DEBUG_STEPS=10 bash training/run_space_training.sh`.
+Checkpoint is written to `space-models/sd/space-Van_Gogh.safetensors`. Key knobs (`ERASE_SCALE`, `ALPHA_ART`, `TRAJECTORY_BANDS`, `LORA_RANK`, stage lengths, loss weights) are documented in [`docs/METHOD.md`](docs/METHOD.md) and exposed as env vars in [`training/run_space_training.sh`](training/run_space_training.sh). A 10-step sanity check: `SPACE_DEBUG_STEPS=10 bash training/run_space_training.sh`.
 
-### Reproduce the Thomas Kinkade submission end-to-end
+The validated 30k-image COCO-FID protocol (the numbers reported above) chains this training step with `inference/generate_images.py`, `evaluation/generate_fid_samples.py`, and `evaluation/evaluate.py` over 50 target prompts × 10 samples and 30,000 COCO prompts. [`training/run_thomas_kinkade_30k.sh`](training/run_thomas_kinkade_30k.sh) is a concrete, artist-specific worked example of that exact pipeline shape — swap in `data/vangogh_prompts.csv` and the Van Gogh checkpoint/filter to reproduce the Van Gogh run.
+
+### Reproduce the Thomas Kinkade 30k pipeline (second validated concept)
 
 Trains SPACE on Thomas Kinkade, generates the 500 matched prompt-pair images, generates 30,000 SPACE images, downloads the official COCO reference, and computes cumulative FID through 30k:
 
@@ -127,9 +144,9 @@ See [`docs/THOMAS_KINKADE_30K_RUNPOD.md`](docs/THOMAS_KINKADE_30K_RUNPOD.md) for
 ```bash
 python inference/generate_images.py \
   --base_model CompVis/stable-diffusion-v1-4 \
-  --esd_path space-models/sd/space-Thomas_Kinkade.safetensors \
-  --prompts_path data/thomas_kinkade_prompts.csv \
-  --save_path results/space/space-Thomas_Kinkade \
+  --esd_path space-models/sd/space-Van_Gogh.safetensors \
+  --prompts_path data/vangogh_prompts.csv \
+  --save_path results/space/space-Van_Gogh \
   --num_samples 10 --num_inference_steps 20 --guidance_scale 7.5
 ```
 
@@ -138,8 +155,8 @@ Omit `--esd_path` to generate vanilla (unedited) SD v1.4 images for the same pro
 ### Evaluate
 
 ```bash
-python evaluation/evaluate.py --only-artist "Thomas Kinkade" --method-keys space
-python evaluation/make_comparison_grids.py --only-artist "Thomas Kinkade" --methods SPACE
+python evaluation/evaluate.py --only-artist "Van Gogh" --method-keys space
+python evaluation/make_comparison_grids.py --only-artist "Van Gogh" --methods SPACE
 ```
 
 Computes CLIP erasure/preservation scores, LPIPS, FID/KID, ResNet agreement, and DINO similarity; writes `results/evaluation/metrics.csv` and a side-by-side comparison grid.
@@ -152,10 +169,12 @@ Computes CLIP erasure/preservation scores, LPIPS, FID/KID, ResNet agreement, and
 
 Checkpoints and full generated-image galleries are hosted externally rather than committed to git:
 
-- **Model weights (LoRA checkpoint for Thomas Kinkade):** `<!-- TODO: add the Hugging Face weights repo URL here before submitting -->`
-- **Generated samples, forget set (`thomas_kinkade_30k/`) and retain set (COCO):** [huggingface.co/datasets/vedangfake/space-erasing-artifacts](https://huggingface.co/datasets/vedangfake/space-erasing-artifacts)
+- **Model weights (SPACE LoRA checkpoint, Van Gogh):** [Google Drive](https://drive.google.com/drive/folders/1L07gdJJQc1Tmf4sj4HkkAuvDdIpWDPIp)
+- **Generated samples — retain set (COCO, SPACE-generated):** [HF: `van_gogh_30k/fid/space`](https://huggingface.co/datasets/vedangfake/space-erasing-artifacts/tree/main/van_gogh_30k/fid/space)
+- **Generated samples — forget set (Van Gogh prompts, vanilla vs. SPACE):** [HF: `van_gogh_30k/report/visual_examples.png`](https://huggingface.co/datasets/vedangfake/space-erasing-artifacts/blob/main/van_gogh_30k/report/visual_examples.png)
+- **Full dataset (both concepts, all splits):** [huggingface.co/datasets/vedangfake/space-erasing-artifacts](https://huggingface.co/datasets/vedangfake/space-erasing-artifacts)
 
-`results/evaluation/` and `results/provenance/` carry the small, checked-in metrics/config/plots for both the Thomas Kinkade submission and the earlier Van Gogh method-development run. `results/thomas_kinkade_30k_report/` is the compact, validated report bundle for the submission (metrics, FID-vs-sample-count curve, training curves, a metric-validation audit, and a representative visual comparison — the full 500-pair comparison grid is on Hugging Face instead of in git).
+`results/evaluation/` and `results/provenance/` carry small, checked-in metrics/config/plots. `results/van_gogh_30k_report/` and `results/thomas_kinkade_30k_report/` are the compact, validated report bundles for each concept (metrics, FID-vs-sample-count curve, training curves, a metric-validation audit, and a representative visual comparison — the full 500-pair comparison grids are on Hugging Face instead of in git).
 
 ## License and attribution
 

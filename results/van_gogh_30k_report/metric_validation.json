@@ -1,0 +1,42 @@
+{
+  "created_at": "2026-07-04T17:45:34.985839+00:00",
+  "status": "PASS_WITH_CAVEATS",
+  "input_checks": {
+    "coco_rows": 30000,
+    "unique_coco_image_ids": 30000,
+    "reference_images": 30000,
+    "generated_images": 30000,
+    "reference_ids_exact_match": true,
+    "generated_ids_exact_match": true,
+    "reference_generated_ids_exact_match": true
+  },
+  "fid": {
+    "canonical_torch_fidelity_native_preprocessing": 14.567864623517039,
+    "canonical_library": "torch-fidelity",
+    "canonical_library_version": "0.3.0",
+    "torch_version": "2.1.2+cu118",
+    "cuda_used": true,
+    "black_images_included": 162,
+    "black_fraction": 0.0054
+  },
+  "paired_metric_checks": {
+    "n_pairs": 500,
+    "clip_drop_recomputed": 0.023862815055847197,
+    "clip_drop_reported": 0.0238628150558471,
+    "style_drop_recomputed": 0.04547675201416018,
+    "style_drop_reported": 0.0454767520141601,
+    "style_target_hits": 162,
+    "clip_drop_identity_pass": true,
+    "style_drop_identity_pass": true
+  },
+  "caveats": [
+    "The published SD v1.4 FID=14.50 is context only unless sampling steps, prompts, seeds, safety handling, image count, and preprocessing are identical.",
+    "162 safety-filtered black images (0.54%) are included in FID and describe the saved pipeline outputs, not an unchecked model distribution.",
+    "CLIP style target rate is a custom five-label closed-set diagnostic, not a standardized artist-classification benchmark.",
+    "Paired metrics use 500 prompt-matched outputs; FID uses 30,000 COCO-caption generations and must not be mixed at the sample level."
+  ],
+  "environment": {
+    "python": "3.11.10",
+    "platform": "Linux-6.8.0-52-generic-x86_64-with-glibc2.35"
+  }
+}

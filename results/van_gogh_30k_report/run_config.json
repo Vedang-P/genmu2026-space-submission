@@ -1,0 +1,11 @@
+{
+  "base_model_id": "CompVis/stable-diffusion-v1-4",
+  "erase_concept": "Vincent van Gogh",
+  "target_prompts_path": "data/vangogh_prompts.csv",
+  "stage1_steps": 300,
+  "stage2_steps": 100,
+  "learning_rate": 0.0001,
+  "lora_rank": 8,
+  "trajectory_bands": "0.2,0.5,0.8",
+  "checkpoint_interval": 50
+}

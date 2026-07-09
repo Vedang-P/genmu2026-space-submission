@@ -1,0 +1,2 @@
+artist,method,n_pairs,clip_vanilla,clip_method,clip_drop,style_vanilla,style_method,style_drop,style_target_rate,clip_image_similarity,lpips,fid,kid,resnet_top1_agreement,resnet_top5_overlap,dino_similarity,run_mode,fid_implementation
+Van Gogh 30k,SPACE,500.0,0.337006245765686,0.3131434307098388,0.0238628150558471,0.297790789604187,0.2523140375900268,0.0454767520141601,0.324,0.7975992940664292,0.5685881137251854,14.567864623517039,,0.114,0.2404,0.6221032456094399,research-method,torch-fidelity-0.3.0-native-input-batch1

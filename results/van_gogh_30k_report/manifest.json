@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "artist": "Van Gogh",
+  "prompt_count": 50,
+  "samples_per_prompt": 10,
+  "paired_images_per_model": 500,
+  "fid_images_per_model": 30000,
+  "final_fid": 14.567864623517039,
+  "fid_implementation": "torch-fidelity 0.3.0, native input, batch_size=1",
+  "coco_reference_source": "shared with results/thomas_kinkade_30k/fid/coco_reference (identical image IDs from data/coco_30k.csv)",
+  "visual_example_files": [
+    "0_0.png",
+    "13_5.png",
+    "18_0.png",
+    "21_6.png",
+    "26_1.png",
+    "2_6.png",
+    "34_2.png",
+    "38_7.png",
+    "42_2.png",
+    "46_8.png",
+    "5_3.png",
+    "9_9.png"
+  ],
+  "report_files": [
+    "all_metrics_dashboard.pdf",
+    "all_metrics_dashboard.png",
+    "fid_every_1k.pdf",
+    "fid_every_1k.png",
+    "fid_progress.csv",
+    "metric_validation.json",
+    "metric_validation.md",
+    "metrics.csv",
+    "prompt_pair_grid.png",
+    "run_config.json",
+    "summary.md",
+    "training_metrics.csv",
+    "training_metrics.png",
+    "training_provenance.json",
+    "visual_examples.pdf",
+    "visual_examples.png"
+  ]
+}
