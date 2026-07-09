@@ -20,6 +20,7 @@ baselines/external/
 baselines/cache/
 logs/
 *.pdf
+!docs/*.pdf
 wandb/
 
 # Bulk generated results — only results/evaluation/, results/provenance/, and
