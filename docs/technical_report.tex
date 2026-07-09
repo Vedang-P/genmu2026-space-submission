@@ -1,5 +1,5 @@
 \documentclass[10pt,twocolumn]{article}
-\usepackage[margin=0.72in,columnsep=0.28in]{geometry}
+\usepackage[margin=0.66in,columnsep=0.28in]{geometry}
 \usepackage{times}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -14,7 +14,7 @@
 \titlespacing*{\subsection}{0pt}{0.7ex plus 0.2ex}{0.3ex}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue!50!black}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.22em}
+\setlength{\parskip}{0.16em}
 
 \title{\vspace{-2.6em}\textbf{SPACE: Style-Preserving Attribute-Constrained Erasure for\\ Artist-Style Unlearning in Text-to-Image Diffusion Models}\vspace{-0.8em}}
 \author{\normalsize Team [ADD TEAM NAME / MEMBER NAMES] \\ \small Gen$\mu$ 2.0 Challenge --- Track 3: Visual Concept Unlearning \\ \small \href{https://github.com/Vedang-P/genmu2026-space-submission}{github.com/Vedang-P/genmu2026-space-submission}}
@@ -29,7 +29,7 @@
 ]
 
 \section{Introduction}
-Text-to-image diffusion models memorize and reproduce recognizable artist styles, raising copyright and consent concerns and motivating \emph{concept erasure} (machine unlearning) methods. Prior approaches make different trade-offs: ESD~\cite{esd} performs a gradient-based edit that moves target-concept predictions away from the original, but erasure strength can trade hard against semantic content and image quality; UCE~\cite{uce} solves a closed-form linear edit over erased and preserved concepts, but is not trajectory-aware and treats each target prompt as a single point rather than a factorized content/style pair; Concept Ablation~\cite{conceptablation} maps a target concept toward a generic anchor distribution, which produces visually pleasing results but can under-erase and damage nearby concepts.
+Text-to-image diffusion models memorize and reproduce recognizable artist styles, raising copyright and consent concerns and motivating \emph{concept erasure} (machine unlearning) methods. Prior approaches make different trade-offs: ESD~\cite{esd} moves target-concept predictions away from the original via gradient descent, but erasure strength can trade hard against content and quality; UCE~\cite{uce} solves a closed-form edit over erased/preserved concepts, but is not trajectory-aware and treats each prompt as a single point rather than a factorized content/style pair; Concept Ablation~\cite{conceptablation} maps a target concept toward a generic anchor, which looks pleasing but can under-erase and damage nearby concepts.
 
 SPACE's premise is that erasure and preservation should be \emph{jointly engineered}, not opposing forces in one loss term. It factorizes each target prompt into content, target-style, neutral-art, and generic-image views; builds a teacher that anchors toward neutral content \emph{and} explicitly subtracts the estimated style residual; edits only a saliency-selected, low-rank subset of cross-attention projections; supervises across multiple denoising trajectory bands; and replays both general prompts and CLIP-mined \emph{vulnerable} nearby styles during training to bound collateral damage.
 
@@ -44,7 +44,7 @@ d &= \epsilon_\theta(x_t,\tau(p_t)) - \epsilon_\theta(x_t,\tau(p_c)) \notag\\
 \end{align}
 with $\alpha{=}0.30$ and $\beta{=}1.0$ by default. Eq.~\ref{eq:teacher} both anchors the target prompt toward a neutral, content-preserving prediction \emph{and} explicitly pushes away from the target-style direction $d$, rather than only imitating a generic replacement distribution.
 
-\textbf{Student.} The base U-Net is frozen; SPACE trains only LoRA adapters (rank 8) inserted into a saliency-selected subset of cross-attention linear projections. Saliency is measured by probe-gradient norm on a small target/band subset, and the top quartile of candidate modules is edited --- the edited set is data-dependent, not a fixed layer list. The ``teacher'' is the same U-Net with adapters disabled, so no separate frozen expert network is required.
+\textbf{Student.} The base U-Net is frozen; SPACE trains only LoRA adapters (rank 8) inserted into a saliency-selected subset of cross-attention linear projections. Saliency is measured by probe-gradient norm on a small target/band subset; the top quartile of candidates is edited, so the edited set is data-dependent, not a fixed layer list. The ``teacher'' is the same U-Net with adapters disabled --- no separate frozen expert network is needed.
 
 \textbf{Loss.} Training supervises three trajectory bands ($t\!\in\!\{0.2,0.5,0.8\}$) with
 \begin{multline}
@@ -100,14 +100,18 @@ That the same hyperparameters transfer across two stylistically distinct artists
 \vspace{-0.5em}
 \end{figure}
 
+\textbf{Published baseline context.} Under each method's own protocol (not re-run here): UCE reports FID-SD 14.37 erasing one artist vs.\ its SD baseline 14.49~\cite{uce}; ESD's COCO-30k table reports FID 13.68 only for the global nudity-removal variant ESD-u vs.\ SD 14.50, and reports no COCO-30k FID for the style-erasure variant ESD-x we benchmark against~\cite{esd}; Concept Ablation reports FID 16.99 (ablated) vs.\ 16.35 (pretrained) under a 50-step DDPM sampler~\cite{conceptablation}. Differing samplers, guidance, and image counts make these context only, not directly comparable to Table~\ref{tab:results} or each other.
+
 \section{Discussion and Limitations}
-A minority of Van Gogh prompts (e.g.\ \emph{``The Reaper''}, \emph{``Cypresses''}) drift toward a recurring dark-robed-figure motif rather than a close content match, indicating the content anchor does not perfectly constrain every prompt and some concept-specific failure modes remain. Style target rate (32--48\%) shows suppression is substantial but not absolute; fully adversarial or indirect phrasings were not exhaustively probed in this evaluation and are a natural next robustness check. Finally, SPACE targets \emph{output-level} style suppression under this evaluation harness --- it is not a formal proof that all target-concept information is removed from model weights, and should not be read as such.
+A minority of Van Gogh prompts (e.g.\ \emph{``The Reaper''}, \emph{``Cypresses''}) drift toward a recurring dark-robed-figure motif rather than a close content match, so the content anchor does not perfectly constrain every prompt. Style target rate (32--48\%) shows suppression is substantial but not absolute; adversarial or indirect phrasings were not exhaustively probed and are a natural next robustness check. SPACE targets \emph{output-level} style suppression under this harness --- not a formal proof that target-concept information is fully removed from model weights.
 
 \section{Conclusion}
-SPACE combines a dual-anchor, style-residual-subtracting teacher with localized, saliency-selected LoRA adapters and multi-axis preservation replay to erase artist style while keeping FID within a fraction of a point of the unedited model at COCO scale. Validated identically on two independent concepts, code, weights, and generated samples (forget and retain sets) are released for reproduction at the repository linked above.
+SPACE combines a dual-anchor, style-residual-subtracting teacher with localized LoRA adapters and multi-axis preservation replay to erase artist style while keeping FID within a fraction of a point of the unedited model. Validated identically on two concepts; code, weights, and forget/retain samples are released for reproduction at the repository above.
 
 \begin{thebibliography}{9}
 \small
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}
 \bibitem{esd} Gandikota, R., Materzynska, J., Fiotto-Kaufman, J., Bau, D. Erasing Concepts from Diffusion Models. \emph{ICCV}, 2023.
 \bibitem{uce} Gandikota, R., Orgad, H., Belinkov, Y., Materzynska, J., Bau, D. Unified Concept Editing in Diffusion Models. \emph{WACV}, 2024.
 \bibitem{conceptablation} Kumari, N., Zhang, B., Wang, S.-Y., Shechtman, E., Zhang, R., Zhu, J.-Y. Ablating Concepts in Text-to-Image Diffusion Models. \emph{ICCV}, 2023.
