@@ -1,0 +1,25 @@
+{
+  "status": "completed",
+  "prompt_count": 50,
+  "samples_per_prompt": 10,
+  "paired_images_per_model": 500,
+  "fid_images_per_model": 30000,
+  "final_fid": 14.57848777666834,
+  "report_files": [
+    "black_image_audit.json",
+    "black_image_audit.md",
+    "fid_progress.csv",
+    "fid_progress.png",
+    "metrics.csv",
+    "prompt_pair_grid.png",
+    "run_config.json",
+    "summary.md",
+    "training_metrics.csv",
+    "training_metrics.png",
+    "training_provenance.json",
+    "metric_validation.json",
+    "metric_validation.md"
+  ],
+  "fid_implementation": "torch-fidelity 0.3.0, native input, batch_size=1",
+  "prior_pre_resized_torchmetrics_fid": 14.089451789855957
+}

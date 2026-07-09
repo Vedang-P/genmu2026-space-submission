@@ -1,0 +1,69 @@
+{
+  "created_at": "2026-07-04T05:58:19.739804+00:00",
+  "status": "PASS_WITH_CAVEATS",
+  "input_checks": {
+    "coco_rows": 30000,
+    "unique_coco_image_ids": 30000,
+    "unique_evaluation_seeds": 25928,
+    "reference_images": 30000,
+    "space_images": 30000,
+    "reference_ids_exact_match": true,
+    "space_ids_exact_match": true,
+    "reference_space_ids_exact_match": true
+  },
+  "fid": {
+    "canonical_torch_fidelity_native_preprocessing": 14.57848777666834,
+    "torchmetrics_pre_resize_299_bilinear": 14.089451789855957,
+    "absolute_difference": 0.48903598681238236,
+    "canonical_library": "torch-fidelity",
+    "canonical_library_version": "0.3.0",
+    "torch_version": "2.1.2+cu118",
+    "cuda_used": true,
+    "black_images_included": 144,
+    "black_fraction": 0.0048
+  },
+  "paired_metric_checks": {
+    "n_pairs": 500,
+    "clip_drop_recomputed": 0.0571129421615601,
+    "clip_drop_reported": 0.05711294216156,
+    "style_drop_recomputed": 0.06444669563293451,
+    "style_drop_reported": 0.0644466956329345,
+    "style_target_hits": 242,
+    "finite_metrics": {
+      "clip_vanilla": true,
+      "clip_method": true,
+      "clip_drop": true,
+      "style_vanilla": true,
+      "style_method": true,
+      "style_drop": true,
+      "style_target_rate": true,
+      "clip_image_similarity": true,
+      "lpips": true,
+      "resnet_top1_agreement": true,
+      "resnet_top5_overlap": true,
+      "dino_similarity": true
+    },
+    "clip_drop_identity_pass": true,
+    "style_drop_identity_pass": true
+  },
+  "metric_definitions": {
+    "clip_text_scores": "Mean CLIP ViT-B/32 text-image logits divided by 100 over 500 pairs; custom implementation.",
+    "clip_image_similarity": "Mean cosine similarity of normalized CLIP ViT-B/32 image embeddings over matched pairs.",
+    "style_score": "Mean CLIP score for 'an artwork in the style of Thomas Kinkade'.",
+    "style_target_rate": "Fraction classified as Thomas Kinkade among Thomas Kinkade, Monet, Rembrandt, Warhol, Picasso prompts; custom closed-set metric.",
+    "lpips": "Mean LPIPS-VGG distance over matched vanilla/SPACE pairs after 224x224 bicubic resize.",
+    "resnet": "Mean ImageNet ResNet-50 top-1 equality and top-5 set overlap over matched pairs.",
+    "dino": "Mean cosine similarity of DINOv2-small CLS embeddings over matched pairs."
+  },
+  "caveats": [
+    "The canonical torch-fidelity FID is the value comparable to this repository's original evaluator; the pre-resized TorchMetrics value is retained as a separate implementation result.",
+    "The published SD v1.4 FID=14.50 is context only unless sampling steps, prompts, seeds, safety handling, image count, and preprocessing are identical.",
+    "144 safety-filtered black images (0.48%) are included in FID and describe the saved pipeline outputs, not an unchecked model distribution.",
+    "CLIP style target rate is a custom five-label closed-set diagnostic, not a standardized artist-classification benchmark.",
+    "Paired metrics use 500 prompt-matched outputs; FID uses 30,000 COCO-caption generations and must not be mixed at the sample level."
+  ],
+  "environment": {
+    "python": "3.11.10",
+    "platform": "Linux-6.8.0-52-generic-x86_64-with-glibc2.35"
+  }
+}

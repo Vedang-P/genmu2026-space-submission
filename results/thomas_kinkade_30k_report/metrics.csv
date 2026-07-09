@@ -1,0 +1,2 @@
+artist,method,n_pairs,clip_vanilla,clip_method,clip_drop,style_vanilla,style_method,style_drop,style_target_rate,clip_image_similarity,lpips,fid,kid,resnet_top1_agreement,resnet_top5_overlap,dino_similarity,run_mode,fid_implementation,fid_pre_resized_torchmetrics
+Thomas Kinkade,SPACE,500.0,0.3572314575576782,0.3001185153961181,0.05711294216156,0.2983959581756591,0.2339492625427246,0.0644466956329345,0.484,0.7549638995528221,0.5784489576816558,14.57848777666834,,0.224,0.2944,0.4708753638193011,research-method,torch-fidelity-0.3.0-native-input-batch1,14.089451789855957

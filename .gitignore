@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# Large / regenerable artifacts — checkpoints and full sample galleries are
+# hosted on Hugging Face instead of committed here (see README).
+esd-weights/
+esd-models/
+esd-images/
+esd_models/
+space-models/
+space-images/
+baseline-models/
+baseline-assets/
+baselines/external/
+baselines/cache/
+logs/
+*.pdf
+wandb/
+
+# Bulk generated results — only results/evaluation/, results/provenance/, and
+# results/thomas_kinkade_30k_report/ are checked in.
+results/baseline/
+results/erased/
+results/uce/
+results/concept_ablation_compvis/
+results/space/
+results/thomas_kinkade_30k/
+results/comparisons/
+results/fid/
+results/final_multi_artist/
