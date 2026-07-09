@@ -320,7 +320,7 @@ for artist in "${selected_artists[@]}"; do
   esd_ckpt="$(resolve_file "ESD-x checkpoint for $artist" \
     "$ROOT/esd-weights/art/$ESD_WEIGHT" \
     "$ROOT/../esd-weights/art/$ESD_WEIGHT" \
-    "/workspace/space-claude-implementation/esd-weights/art/$ESD_WEIGHT")"
+    "/workspace/genmu2026-space-submission/esd-weights/art/$ESD_WEIGHT")"
 
   generate_case_images_if_needed "Vanilla $artist" "results/baseline/$DIR_SLUG" "$EXPECTED_PAIRS" \
     "$PYTHON_BIN" inference/generate_esd_old.py \
@@ -345,7 +345,7 @@ for artist in "${selected_artists[@]}"; do
   if [ ! -f "$uce_ckpt" ] && [ "$TRAIN_MISSING_UCE" = "1" ]; then
     ONLY_ARTIST="$artist" bash baselines/run_uce_training.sh
   fi
-  uce_ckpt="$(resolve_file "UCE checkpoint for $artist" "$ROOT/$uce_ckpt" "/workspace/space-claude-implementation/baseline-models/uce/uce-$SLUG.safetensors")"
+  uce_ckpt="$(resolve_file "UCE checkpoint for $artist" "$ROOT/$uce_ckpt" "/workspace/genmu2026-space-submission/baseline-models/uce/uce-$SLUG.safetensors")"
   generate_space_method_images "UCE $artist" "$uce_ckpt" "$CSV" "$FILTER" "results/uce" "uce-$SLUG" "$samples"
 
   train_space_if_needed "$artist" "$SLUG" "$CSV" "$FILTER" "$ERASE_CONCEPT"

@@ -59,7 +59,7 @@ require_file() {
 resolve_space_ckpt() {
   local candidates=(
     "$ROOT/space-models/sd/space-Van_Gogh.safetensors"
-    "/workspace/space-claude-implementation/space-models/sd/space-Van_Gogh.safetensors"
+    "/workspace/genmu2026-space-submission/space-models/sd/space-Van_Gogh.safetensors"
     "/workspace/space-checkpoints/van_gogh_space/space-Van_Gogh.safetensors"
   )
   local candidate

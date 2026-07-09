@@ -28,8 +28,8 @@ Clone under the persistent mount, then install the repository's pinned environme
 
 ```bash
 cd /workspace
-git clone https://github.com/Vedang-P/space-claude-implementation.git
-cd space-claude-implementation/erasing
+git clone https://github.com/Vedang-P/genmu2026-space-submission.git
+cd genmu2026-space-submission
 bash baselines/bootstrap_runpod_env.sh
 source .venv/bin/activate
 huggingface-cli login --token "$HF_TOKEN"
@@ -39,7 +39,7 @@ wandb login "$WANDB_API_KEY"
 ## Preflight
 
 ```bash
-cd /workspace/space-claude-implementation/erasing
+cd /workspace/genmu2026-space-submission
 bash baselines/preflight_env.sh
 nvidia-smi
 ```
@@ -49,7 +49,7 @@ For a cheap end-to-end generation check before the full run:
 ```bash
 FID_IMAGES=16 NUM_SAMPLES=1 SPACE_STAGE1_STEPS=1 SPACE_STAGE2_STEPS=0 \
 FID_BATCH_SIZE=4 WANDB_MODE=offline \
-bash run_thomas_kinkade_30k.sh
+bash training/run_thomas_kinkade_30k.sh
 ```
 
 After this check, remove the smoke checkpoint and outputs before the full run because the harness deliberately reuses existing files:
@@ -64,13 +64,13 @@ rm -rf results/thomas_kinkade_30k
 Run inside `tmux` so SSH disconnects do not stop the job:
 
 ```bash
-cd /workspace/space-claude-implementation/erasing
+cd /workspace/genmu2026-space-submission
 tmux new -s thomas-kinkade
 source .venv/bin/activate
 WANDB_PROJECT=space-thomas-kinkade \
 FID_BATCH_SIZE=8 \
 COMMIT_RESULTS=1 \
-bash run_thomas_kinkade_30k.sh
+bash training/run_thomas_kinkade_30k.sh
 ```
 
 If batch 8 runs out of memory, restart with `FID_BATCH_SIZE=4`; all completed PNGs are skipped. If the process stops, rerun the same command. Prompt and FID generation resume file-by-file, the official COCO download/extraction resumes, W&B uses stable resumable run IDs, training metrics are fsynced each step, and training snapshots are written every 50 steps.
