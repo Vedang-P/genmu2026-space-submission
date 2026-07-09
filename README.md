@@ -4,6 +4,8 @@ SPACE is a preservation-first method for artist/style unlearning in Stable Diffu
 
 For a prompt like `Bedroom in Arles by Vincent van Gogh`, the edited model should still produce a coherent bedroom — not a collapsed or unrelated image, and not another named artist's style. SPACE targets **neutralized style suppression**, not artist replacement and not indiscriminate quality degradation.
 
+**Technical report:** [`docs/technical_report.pdf`](docs/technical_report.pdf) ([source](docs/technical_report.tex)).
+
 ## Submission target: Van Gogh
 
 The submitted checkpoint erases **Vincent van Gogh** from CompVis Stable Diffusion v1.4. Validated on 50 target prompts (10 samples each, 500 matched pairs) plus a full 30,000-image FID run against the official MS COCO 2014 validation set.
